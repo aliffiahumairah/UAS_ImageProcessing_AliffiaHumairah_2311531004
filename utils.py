@@ -71,7 +71,7 @@ def load_model():
         compile=False
     )
 
-    with open(CLASS_NAMES_PATH, 'r') as f:
+    with open(CLASS_NAMES_PATH, "r") as f:
         class_names = json.load(f)
 
     return model, class_names
