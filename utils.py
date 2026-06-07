@@ -1,8 +1,15 @@
-import tensorflow as tf
 import numpy as np
 from PIL import Image
 import json, time, os
 import streamlit as st
+
+# Ganti tensorflow dengan keras langsung
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+try:
+    import tensorflow as tf
+    from tensorflow import keras
+except ImportError:
+    import keras
 
 # ── Path ──────────────────────────────────────────────
 BASE_DIR         = os.path.dirname(os.path.abspath(__file__))
@@ -27,7 +34,6 @@ CLASS_EMOJI = {
     'white-glass': '⚪',
 }
 
-# ── Saran pengelolaan ─────────────────────────────────
 RECYCLE_INFO = {
     'battery':     '⚠️ Bawa ke tempat daur ulang baterai khusus. Jangan buang ke tempat sampah biasa!',
     'biological':  '🌱 Bisa dijadikan kompos. Buang ke tempat sampah organik.',
@@ -43,7 +49,6 @@ RECYCLE_INFO = {
     'white-glass': '♻️ Masukkan ke bank sampah kaca. Bisa didaur ulang.',
 }
 
-# ── Kategori organik/anorganik ────────────────────────
 CATEGORY_MAP = {
     'battery':     ('Anorganik', '♻️', '#2196F3', 'Sampah anorganik yang dapat didaur ulang secara khusus.'),
     'biological':  ('Organik',   '🌱', '#4CAF50', 'Sampah organik yang dapat terurai secara alami.'),
@@ -61,7 +66,13 @@ CATEGORY_MAP = {
 
 @st.cache_resource
 def load_model():
-    model = tf.keras.models.load_model(MODEL_PATH)
+    try:
+        import tensorflow as tf
+        model = tf.keras.models.load_model(MODEL_PATH)
+    except Exception:
+        import keras
+        model = keras.models.load_model(MODEL_PATH)
+
     with open(CLASS_NAMES_PATH) as f:
         class_names = json.load(f)
     return model, class_names
