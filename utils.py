@@ -3,10 +3,13 @@ from PIL import Image
 import json, time, os
 import streamlit as st
 
-import tensorflow as tf
-
-# Menyembunyikan log warning tensorflow yang tidak diperlukan
+# Ganti tensorflow dengan keras langsung
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+try:
+    import tensorflow as tf
+    from tensorflow import keras
+except ImportError:
+    import keras
 
 # ── Path ──────────────────────────────────────────────
 BASE_DIR         = os.path.dirname(os.path.abspath(__file__))
@@ -98,12 +101,3 @@ def predict(model, class_names, img: Image.Image):
         'all_probs':  {class_names[i]: float(preds[i]) for i in range(len(class_names))},
         'time_ms':    elapsed
     }
-
-@st.cache_resource
-def load_model():
-    # Langsung gunakan tensorflow keras untuk menjamin pembacaan file .h5 aman
-    model = tf.keras.models.load_model(MODEL_PATH)
-
-    with open(CLASS_NAMES_PATH) as f:
-        class_names = json.load(f)
-    return model, class_names
