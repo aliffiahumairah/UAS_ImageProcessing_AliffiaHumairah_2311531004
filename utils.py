@@ -66,15 +66,14 @@ CATEGORY_MAP = {
 
 @st.cache_resource
 def load_model():
-    try:
-        import tensorflow as tf
-        model = tf.keras.models.load_model(MODEL_PATH)
-    except Exception:
-        import keras
-        model = keras.models.load_model(MODEL_PATH)
+    model = tf.keras.models.load_model(
+        MODEL_PATH,
+        compile=False
+    )
 
-    with open(CLASS_NAMES_PATH) as f:
+    with open(CLASS_NAMES_PATH, 'r') as f:
         class_names = json.load(f)
+
     return model, class_names
 
 def load_history():
